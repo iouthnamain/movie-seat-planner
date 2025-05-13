@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Film, Ticket, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import AdminMovieForm from "@/components/admin/AdminMovieForm";
 import AdminScreeningForm from "@/components/admin/AdminScreeningForm";
-import { DataTable } from "@/components/ui/table";
+import { DataTable } from "@/components/ui/data-table";
 import { toast } from "sonner";
 
 const AdminPage = () => {
