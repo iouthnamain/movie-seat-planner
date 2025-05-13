@@ -15,6 +15,11 @@ export interface MovieProps {
 }
 
 const MovieCard = ({ movie }: { movie: MovieProps }) => {
+  // Safety check to prevent accessing properties of undefined
+  if (!movie) {
+    return null;
+  }
+
   return (
     <Card className="overflow-hidden bg-card hover:shadow-lg hover:shadow-cinema-primary/10 transition-all duration-300 h-full flex flex-col">
       <Link to={`/movies/${movie.id}`} className="overflow-hidden h-64 relative">

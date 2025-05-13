@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import MovieGrid, { MovieProps } from "@/components/movie/MovieCard";
+import MovieCard, { MovieProps } from "@/components/movie/MovieCard";
+import MovieGrid from "@/components/movie/MovieGrid";
 import ScreeningList, { ScreeningProps } from "@/components/screening/ScreeningList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
