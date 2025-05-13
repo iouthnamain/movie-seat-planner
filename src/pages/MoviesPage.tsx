@@ -9,7 +9,7 @@ import { MovieProps } from "@/components/movie/MovieCard";
 
 const MoviesPage = () => {
   const [search, setSearch] = useState("");
-  const [genreFilter, setGenreFilter] = useState("");
+  const [genreFilter, setGenreFilter] = useState("all");
 
   // Mock data for movies
   const allMovies: MovieProps[] = [
@@ -82,7 +82,7 @@ const MoviesPage = () => {
   // Filter movies based on search and genre
   const filteredMovies = allMovies.filter((movie) => {
     const matchesSearch = movie.title.toLowerCase().includes(search.toLowerCase());
-    const matchesGenre = genreFilter ? movie.genre.toLowerCase() === genreFilter.toLowerCase() : true;
+    const matchesGenre = genreFilter === "all" ? true : movie.genre.toLowerCase() === genreFilter.toLowerCase();
     return matchesSearch && matchesGenre;
   });
 
@@ -118,7 +118,7 @@ const MoviesPage = () => {
                 <SelectValue placeholder="All Genres" />
               </SelectTrigger>
               <SelectContent className="bg-card">
-                <SelectItem value="">All Genres</SelectItem>
+                <SelectItem value="all">All Genres</SelectItem>
                 {genres.map((genre) => (
                   <SelectItem key={genre} value={genre.toLowerCase()}>
                     {genre}

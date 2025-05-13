@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import ScreeningList, { ScreeningProps } from "@/components/screening/ScreeningList";
 
 const ScreeningsPage = () => {
-  const [dateFilter, setDateFilter] = useState("");
-  const [movieFilter, setMovieFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("all");
+  const [movieFilter, setMovieFilter] = useState("all");
   
   // Mock data for screenings
   const allScreenings: ScreeningProps[] = [
@@ -69,8 +69,8 @@ const ScreeningsPage = () => {
 
   // Filter screenings based on selections
   const filteredScreenings = allScreenings.filter(screening => {
-    const matchesDate = dateFilter ? screening.date === dateFilter : true;
-    const matchesMovie = movieFilter ? screening.movieTitle === movieFilter : true;
+    const matchesDate = dateFilter === "all" ? true : screening.date === dateFilter;
+    const matchesMovie = movieFilter === "all" ? true : screening.movieTitle === movieFilter;
     return matchesDate && matchesMovie;
   });
 
@@ -88,7 +88,7 @@ const ScreeningsPage = () => {
                 <SelectValue placeholder="All Dates" />
               </SelectTrigger>
               <SelectContent className="bg-card">
-                <SelectItem value="">All Dates</SelectItem>
+                <SelectItem value="all">All Dates</SelectItem>
                 {dates.map(date => (
                   <SelectItem key={date} value={date}>
                     {date}
@@ -106,7 +106,7 @@ const ScreeningsPage = () => {
                 <SelectValue placeholder="All Movies" />
               </SelectTrigger>
               <SelectContent className="bg-card">
-                <SelectItem value="">All Movies</SelectItem>
+                <SelectItem value="all">All Movies</SelectItem>
                 {movies.map(movie => (
                   <SelectItem key={movie} value={movie}>
                     {movie}
