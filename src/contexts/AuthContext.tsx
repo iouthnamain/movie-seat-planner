@@ -5,14 +5,27 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+type UserRole = 'customer' | 'staff' | 'admin';
+
+type Profile = {
+  id: string;
+  first_name?: string;
+  last_name?: string;
+  avatar_url?: string;
+  role: UserRole;
+};
+
 type AuthContextType = {
   session: Session | null;
   user: User | null;
-  profile: any | null;
+  profile: Profile | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, firstName: string, lastName: string, role?: UserRole) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
+  isAdmin: () => boolean;
+  isStaff: () => boolean;
+  isCustomer: () => boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,7 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -77,7 +90,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      setProfile(data);
+      setProfile(data as Profile);
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
@@ -101,7 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
+  const signUp = async (email: string, password: string, firstName: string, lastName: string, role: UserRole = 'customer') => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
@@ -110,13 +123,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           data: {
             first_name: firstName,
             last_name: lastName,
+            role: role
           },
         },
       });
 
       if (!error) {
         toast.success('Account created! Please check your email for verification.');
-        navigate('/auth/login');
+        navigate('/auth');
       }
 
       return { error };
@@ -131,6 +145,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     navigate('/');
   };
 
+  const isAdmin = () => profile?.role === 'admin';
+  const isStaff = () => profile?.role === 'staff' || profile?.role === 'admin';
+  const isCustomer = () => profile?.role === 'customer';
+
   return (
     <AuthContext.Provider
       value={{
@@ -141,6 +159,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signUp,
         signOut,
         loading,
+        isAdmin,
+        isStaff,
+        isCustomer,
       }}
     >
       {children}

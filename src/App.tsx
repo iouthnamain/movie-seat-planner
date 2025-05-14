@@ -15,7 +15,9 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import BookingsPage from "./pages/BookingsPage";
+import Unauthorized from "./pages/Unauthorized";
 import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const App = () => (
   <TooltipProvider>
@@ -29,12 +31,33 @@ const App = () => (
             <Route path="/movies" element={<MoviesPage />} />
             <Route path="/movies/:id" element={<MovieDetailPage />} />
             <Route path="/screenings" element={<ScreeningsPage />} />
-            <Route path="/booking/:id" element={<BookingPage />} />
-            <Route path="/booking-success" element={<BookingSuccessPage />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/booking/:id" element={
+              <ProtectedRoute requiredRole="customer">
+                <BookingPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/booking-success" element={
+              <ProtectedRoute>
+                <BookingSuccessPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminPage />
+              </ProtectedRoute>
+            } />
             <Route path="/auth" element={<AuthPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/bookings" element={<BookingsPage />} />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/bookings" element={
+              <ProtectedRoute>
+                <BookingsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

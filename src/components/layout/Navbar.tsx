@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Film, Ticket, User, Search, LogOut } from "lucide-react";
+import { Film, Ticket, User, Search, LogOut, Settings, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   DropdownMenu, 
@@ -14,13 +14,26 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Navbar = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, isAdmin, isStaff } = useAuth();
 
   const getInitials = () => {
     if (profile?.first_name || profile?.last_name) {
       return `${profile.first_name?.[0] || ''}${profile.last_name?.[0] || ''}`.toUpperCase();
     }
     return user?.email?.[0].toUpperCase() || 'U';
+  };
+
+  const getRoleLabel = () => {
+    if (!profile) return '';
+    
+    switch (profile.role) {
+      case 'admin':
+        return 'Administrator';
+      case 'staff':
+        return 'Staff Member';
+      default:
+        return 'Customer';
+    }
   };
 
   return (
@@ -43,7 +56,7 @@ const Navbar = () => {
           <Link to="/screenings" className="text-cinema-text hover:text-cinema-primary transition-colors">
             Screenings
           </Link>
-          {user && (
+          {isStaff() && (
             <Link to="/admin" className="text-cinema-text hover:text-cinema-primary transition-colors">
               Admin
             </Link>
@@ -68,8 +81,10 @@ const Navbar = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{getRoleLabel()}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                
+                {/* All users see these options */}
                 <DropdownMenuItem asChild>
                   <Link to="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
@@ -82,7 +97,30 @@ const Navbar = () => {
                     My Bookings
                   </Link>
                 </DropdownMenuItem>
-                {/* Add admin link if needed */}
+                
+                {/* Staff and admin see these options */}
+                {isStaff() && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+                
+                {/* Only admin sees these options */}
+                {isAdmin() && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin/users" className="cursor-pointer">
+                      <Users className="mr-2 h-4 w-4" />
+                      User Management
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut} className="text-red-500 cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
